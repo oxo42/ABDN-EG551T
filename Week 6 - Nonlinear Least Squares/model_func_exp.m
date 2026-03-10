@@ -3,6 +3,10 @@ function y = model_func_exp(x, p, k)
 % y - output y-value
 % x - input x-value
 % k - defines differentiation order
+syms p [1 2] 
+syms x
+% f = p(1) * exp(p(2)*x)
+
 if k==0 
     y = p(1)*exp(p(2)*x);
 elseif k == 1
