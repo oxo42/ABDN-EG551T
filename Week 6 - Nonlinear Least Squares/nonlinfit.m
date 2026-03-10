@@ -1,6 +1,6 @@
 function p = nonlinfit(x,y,p0,tol)
 % function call: p = nonlinfit(x,y,p0,tol)
-% p - output row of optimaised parameters
+% p - output row of optimised parameters
 % x - input row of x-data
 % y - input row of y-data
 % p0 - input row of initial parameters
