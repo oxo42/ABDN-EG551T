@@ -3,7 +3,7 @@ ys = [0.4 0.4333 0.4694 0.5085 0.5509 0.5967];
 %%
 syms p1 p2 x
 f = p1 * exp(p2*x) %[output:2cd2cb49]
-F = matlabFunction(f) %[output:73d93911]
+F = matlabFunction(f) %[output:6721ece5] %[output:73d93911]
 Dfp1 = diff(f, p1) %[output:6f57d543]
 Dfp2 = diff(f, p2) %[output:50b2d5c2]
 p0 = [1 0];
@@ -14,7 +14,7 @@ p = nonlinfit(xs,ys,p0,tol); %[output:9dfcbd55] %[output:128b3009] %[output:333e
 disp("Finished non-linear fit") %[output:06ff7280]
 %%
 % linearisation
-% log(y) = p2*x + log(p1)
+% log(y) = log(p1) + p2 * x
 z = polyfit(xs,log(ys),1);
 pz = [exp(z(2)), z(1)] %[output:67c72f02]
 %%
@@ -33,6 +33,9 @@ legend("f", "z") %[output:1bf9ba12]
 %---
 %[output:2cd2cb49]
 %   data: {"dataType":"symbolic","outputData":{"name":"f","value":"p_1 \\,{\\mathrm{e}}^{p_2 \\,x}"}}
+%---
+%[output:6721ece5]
+%   data: {"dataType":"symbolic","outputData":{"name":"d","value":"\\log \\left(p_1 \\,{\\mathrm{e}}^{p_2 \\,x} \\right)"}}
 %---
 %[output:73d93911]
 %   data: {"dataType":"textualVariable","outputData":{"header":"function_handle with value:","name":"F","value":"    @(p1,p2,x)p1.*exp(p2.*x)\n"}}
