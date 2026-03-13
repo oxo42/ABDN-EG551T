@@ -40,7 +40,7 @@ else
     interval = abs(fb - fa);
 end
 
-while interval > err
+while abs(interval) > err
 
     % pause for animation but as things move on, pause less
     if dofig
