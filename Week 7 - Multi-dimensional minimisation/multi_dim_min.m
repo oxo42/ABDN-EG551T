@@ -31,7 +31,7 @@ syms f(x,y)
 f(x,y) = 5*x^2 - 6*x*y + 5*y^2 %[output:0cede491]
 
 p = [-1 -1];
-[min, count] = successive_descent(f, p) %[output:81733a12] %[output:178d88ed]
+[min, count] = successive_descent(f, p) %[output:1bbf4876] %[output:24d1d51b]
 
 function [p, count] = successive_descent(f, p, dstep, step_size, tol)
 arguments
@@ -47,7 +47,7 @@ syms g(lambda)
 i = eye(length(args));
 gap = tol+1;
 count = 0;
-while gap > tol || count 
+while gap > tol || count > 1000
     for n=1:length(args)
         % gives a nx1 matrix of args to pass to the function
         % looks like
@@ -63,7 +63,7 @@ while gap > tol || count
             direction = -1;
         end
         step = step_size * direction;
-        [next, b, gss_count] = gss(g, l, l+step, tol);
+        next = gss(g, l, l+step, tol);
         gap = abs(next - p(n));
         p(n) = next;
     end
@@ -128,9 +128,9 @@ end
 %[output:0cede491]
 %   data: {"dataType":"symbolic","outputData":{"name":"f(x, y)","value":"5\\,x^2 -6\\,x\\,y+5\\,y^2"}}
 %---
-%[output:81733a12]
+%[output:1bbf4876]
 %   data: {"dataType":"matrix","outputData":{"columns":2,"name":"min","rows":1,"type":"double","value":[["0.0451","0.0141"]]}}
 %---
-%[output:178d88ed]
+%[output:24d1d51b]
 %   data: {"dataType":"textualVariable","outputData":{"name":"count","value":"267"}}
 %---
