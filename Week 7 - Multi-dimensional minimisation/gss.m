@@ -1,15 +1,13 @@
-function [a, b, n] = gss(f, a, b, err, N, use_width, fighandle)
+function [a, b, n] = gss(f, a, b, err, N, fighandle)
 arguments
     f
     a
     b
     err
     N = 1000
-    use_width = true
     fighandle = []
 end
 % Golden Section Search Method where err is interval with
-%  use_width, if true will test b-a. if false will test abs(f(b) - f(a))
 
 dofig = ~isempty(fighandle);
 if dofig
@@ -34,16 +32,11 @@ fc = f(c);
 fd = f(d);
 
 
-if use_width
-    interval = b - a;
-else
-    interval = abs(fb - fa);
-end
+interval = b - a;
 
 while abs(interval) > err
-
-    % pause for animation but as things move on, pause less
     if dofig
+        % pause for animation but as things move on, pause less
         if n < 10
             p = 0.5;
         elseif n < 50
@@ -79,11 +72,7 @@ while abs(interval) > err
         disp("More than " + N + " Bailing");
         break
     end
-    if use_width
-        interval = b - a;
-    else
-        interval = abs(fb - fa);
-    end
+    interval = b - a;
 end
 if dofig
     hold off;
