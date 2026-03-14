@@ -1,82 +1,117 @@
-function [a, b, n] = gss(f, a, b, err, N, fighandle)
-arguments
-    f
-    a
-    b
-    err
-    N = 1000
-    fighandle = []
-end
-% Golden Section Search Method where err is interval with
+function alphaOpt = gss(func,delta,err)
 
-dofig = ~isempty(fighandle);
-if dofig
-    figure(fighandle);
-    hold on
-    colororder('glow12');
+% GOLDEN SECTION SEARCH METHOD %
+
+% Written by: Emre SAYIN
+% May 2021
+% Matlab Version: R2019a
+
+% This method is used to find the optimum step size for a given step size
+% function
+% Reference for the algorithm : Arora, J. S. (2017). Introduction to
+% optimum design
+% Feel free to use with citation 
+% Contact: sayine15@itu.edu.tr
+
+% Inputs: function, delta (initial step size), err (error tolerance)
+% Output: Optimum step size
+
+
+% ---- Example usage of the function -----%: 
+% func = @(alpha) 2-4*alpha+exp(alpha); %Construct the function
+% delta = 0.05;
+% err = 0.001;
+% optAlpha = gss(func,delta,err); %Find the optimum step size by using
+                                  % function
+
+                                                           
+gR  = (sqrt(5) + 1)/2; %Golden Ratio
+global tau
+tau = (sqrt(5) - 1)/2;
+
+%Construct first variable and its value
+alpha(1) = delta;
+funcVal(1) = func(alpha(1));
+
+bracketingFlag = 0;
+optAlphaFlag = 0;
+i = 1;
+
+%% Phase I
+while bracketingFlag == 0 %While bracketing is not reached
     
-end
-
-r = (3 - sqrt(5))/2; % GSS Ratio ~ 0.38
-n = 0;
-fa = f(a);
-fb = f(b);
-if dofig
-    plot(a, fa, "o");
-    plot(b, fb, "o");
-end
-
-c = a + r * (b - a);
-d = b - r * (b - a);
-fc = f(c);
-fd = f(d);
-
-
-interval = b - a;
-
-while abs(interval) > err
-    if dofig
-        % pause for animation but as things move on, pause less
-        if n < 10
-            p = 0.5;
-        elseif n < 50
-            p = 0.1;
-        else
-            p = 0.01;
+    alpha(i+1) = alpha(i) + delta*(gR)^(i); %Calculate alpha
+    
+    funcVal(i+1) = func(alpha(i+1)); %Calculate corresp. function value
+    
+    if i >= 2 %After calculating the first three elements
+        
+        if (funcVal(i) < funcVal(i-1) && funcVal(i) < funcVal(i+1)) %If min
+                                                        %existence detected          
+            alpha_U = alpha(i+1); %Store alpha_lower
+            alpha_L = alpha(i-1); %Store alpha_upper
+            
+            [I,alpha_a,alpha_b] = updateAlpha_ab(alpha_L,alpha_U);
+            
+            if I < err
+                optAlphaFlag = 1;
+            end
+            iter = 1; %Add an iteration for the first phase
+            bracketingFlag = 1; %Bracketing has been found!
+            break
+            
         end
-        pause(p);
+        
     end
     
-    if fc < fd
-        b = d;
-        fb = fd;
-        d = c;
-        fd = fc;
-        c = a + r * (b - a);
-        fc = f(c);
-        if dofig
-            plot(b, fb, 'o');
-        end
-    else
-        a = c;
-        fa = fc;
-        c = d; fc = fd;
-        d = b - r * (b - a);
-        fd = f(d);
-        if dofig
-            plot(a, fa, "o");
-        end
+    i = i+1;
+end  %End of phase I
+
+
+%% Phase II
+while optAlphaFlag == 0 %While optimum alpha is not found
+    
+    funcA = func(alpha_a); %Calculate corresp. func value for alpha_a
+    funcB = func(alpha_b); %Calculate corresp. func value for alpha_b
+    
+    if funcA < funcB
+        
+        %alpha_L = alpha_L;
+        alpha_U = alpha_b;
+        
+    elseif funcA > funcB
+        
+        alpha_L = alpha_a;
+        %alpha_U = alpha_U;
+        
+    elseif funcA == funcB
+        
+        alpha_L = alpha_a;
+        alpha_U = alpha_b;
+    
     end
-    n = n + 1;
-    if n > N
-        disp("More than " + N + " Bailing");
-        break
+    
+    [I,alpha_a,alpha_b] = updateAlpha_ab(alpha_L,alpha_U);
+    
+    if I < err %If error is less than given value
+        
+        optAlphaFlag = 1; %Optimum alpha found!
+    
     end
-    interval = b - a;
-end
-if dofig
-    hold off;
-end
+    
+    iter = iter + 1; %One can calculate the total number of iterations by using
+                     %this variable as well
+end %end of Phase II
+
+alphaOpt = 0.5*(alpha_a + alpha_b); %Calculate optimum alpha
+
+%%
+    function [I,alphaA,alphaB]= updateAlpha_ab(alphaL,alphaU) %Calculate alpha_a and alpha_b
+        
+        I = alphaU - alphaL;
+        alphaA = alphaL + I*(1-tau);
+        alphaB = alphaL + tau*I;
+        
+    end
 
 end
-
